@@ -12,7 +12,7 @@ def bus_stations(request):
     page_number = int(request.GET.get('page', 1))
     PER_PAGE = 10
     stations = []
-    with open('./data-398-2018-08-30.csv', newline='', encoding='utf-8') as csvfile:
+    with open('data-398-2018-08-30.csv', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         for row in reader:
             stations.append({
