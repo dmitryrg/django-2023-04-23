@@ -29,7 +29,7 @@ def dish(request, dish):
     if dish_content is None:
         return render(request, template_name, context)
 
-    amount = int(request.GET.get('servings', '1'))
+    amount = int(request.GET.get('servings', 1))
 
     for key, value in dish_content.items():
         recipe[key] = value * amount
