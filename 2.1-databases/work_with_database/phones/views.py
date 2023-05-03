@@ -8,7 +8,7 @@ def index(request):
 
 
 def show_catalog(request):
-    sort = request.GET.get('sort')
+    sort = request.GET.get('sort', None)
     template = 'catalog.html'
     _phones = Phone.objects.all()
     phones = [
@@ -24,11 +24,21 @@ def show_catalog(request):
         if sort == 'max_price':
             return lambda x: -x['price']
     # лучше сортировать запросом к базе, но пока не понятно как
-    context = {'phones': sorted(phones, key=sort_func())}
+    context = {'phones': phones if sort is None else sorted(phones, key=sort_func())}
     return render(request, template, context)
 
 
 def show_product(request, slug):
     template = 'product.html'
-    context = {}
+    _phone = Phone.objects.filter(slug=slug)[0]
+    phone = {
+        'name': _phone.name,
+        'price': _phone.price,
+        'image': _phone.image,
+        'slug': _phone.slug,
+        'release_date': _phone.release_date,
+        'lte_exists': _phone.lte_exists,
+    }
+
+    context = {'phone': phone}
     return render(request, template, context)
