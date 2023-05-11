@@ -18,7 +18,11 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
 
+from school.views import students_list
+
 urlpatterns = [
-    path('', include('school.urls')),
+    path('', students_list, name='students'),
     path('admin/', admin.site.urls),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
