@@ -17,22 +17,24 @@ class Command(BaseCommand):
                 try:
                     teacher = Teacher.objects.get(id=record['pk'])
                 except:
-                    Teacher.objects.create(
+                    teacher = Teacher.objects.create(
                         id=record['pk'],
                         name=record['fields']['name'],
                         subject=record['fields']['subject']
                     )
             elif record['model'] == 'school.student':
                 try:
-                    Student.objects.get(id=record['pk'])
+                    student = Student.objects.get(id=record['pk'])
                 except:
-                    teacher = Teacher.objects.get(id=record['fields']['teacher'])
-                    Student.objects.create(
+                    student = Student.objects.create(
                         id=record['pk'],
                         name=record['fields']['name'],
-                        group=record['fields']['group'],
-                        teacher=teacher
+                        group=record['fields']['group']
                     )
+                # при добавлении связи, если уже существует, то просто игнорирует команду, ошибки нет
+                student.teachers.add(teacher)
+
+
         print('Base fill')
 
 
