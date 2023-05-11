@@ -6,10 +6,10 @@ from school.models import Teacher, Student
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        pass
+        parser.add_argument('filename', nargs=1, type=str)
 
     def handle(self, *args, **options):
-        with open('school.json', 'r', encoding='utf-8') as file:
+        with open(options['filename'][0], 'r', encoding='utf-8') as file:
             records = json.load(file)
 
         for record in records:

@@ -4,12 +4,13 @@ import json
 from school.models import Teacher, Student
 
 
+# run          python manage.py loaddata-m-to-m school.json
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        pass
+        parser.add_argument('filename', nargs=1, type=str)
 
     def handle(self, *args, **options):
-        with open('school.json', 'r', encoding='utf-8') as file:
+        with open(options['filename'][0], 'r', encoding='utf-8') as file:
             records = json.load(file)
 
         for record in records:
@@ -32,6 +33,7 @@ class Command(BaseCommand):
                         group=record['fields']['group']
                     )
                 # при добавлении связи, если уже существует, то просто игнорирует команду, ошибки нет
+                teacher = Teacher.objects.get(id=record['fields']['teacher'])
                 student.teachers.add(teacher)
 
 
