@@ -1,10 +1,6 @@
 from django.db import models
 
 
-class Tag(models.Model):
-    name = models.CharField(max_length=256, verbose_name='Название')
-
-
 class Article(models.Model):
 
     title = models.CharField(max_length=256, verbose_name='Название')
@@ -12,7 +8,7 @@ class Article(models.Model):
     published_at = models.DateTimeField(verbose_name='Дата публикации')
     image = models.ImageField(null=True, blank=True, verbose_name='Изображение',)
 
-    tags = models.ManyToManyField(Tag, through='Scope')
+    tags = models.ManyToManyField('Tag', through='Scope')
 
     class Meta:
         verbose_name = 'Статья'
@@ -23,7 +19,16 @@ class Article(models.Model):
         return self.title
 
 
+class Tag(models.Model):
+    name = models.CharField(max_length=256, verbose_name='Название')
+
+    class Meta:
+        ordering = ['name']
+
 class Scope(models.Model):
-    article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='scopes')
+    tag = models.ForeignKey(Tag, on_delete=models.CASCADE, related_name='scopes')
     is_main = models.BooleanField()
+
+    class Meta:
+        ordering = ['-is_main']
