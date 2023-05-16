@@ -23,7 +23,13 @@ class Tag(models.Model):
     name = models.CharField(max_length=256, verbose_name='Название')
 
     class Meta:
+        verbose_name = 'Тэг'
+        verbose_name_plural = 'Тэги'
         ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
 
 class Scope(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='scopes')
@@ -31,4 +37,9 @@ class Scope(models.Model):
     is_main = models.BooleanField()
 
     class Meta:
+        verbose_name = 'Линк Тэг-Статья'
+        verbose_name_plural = 'Линки Тэг-Статья'
         ordering = ['-is_main']
+
+    def __str__(self):
+        return self.article.title + ' / ' + self.tag.name
