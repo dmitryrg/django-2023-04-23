@@ -1,31 +1,28 @@
-# TODO: опишите необходимые обработчики, рекомендуется использовать generics APIView классы:
-# TODO: ListCreateAPIView, RetrieveUpdateAPIView, CreateAPIView
-from rest_framework.generics import ListAPIView, RetrieveAPIView
-from rest_framework.response import Response
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, ListCreateAPIView
 
-from measurement.models import Sensor, Measurement
-from measurement.serializers import SensorDetailSerializer, MeasurementSerializer
+from measurement.models import Sensor
+from measurement.serializers import SensorDetailSerializer, MeasurementSerializer, SensorSerializer
 
 
-class SensorsView(ListAPIView):
-    queryset = Sensor.objects.prefetch_related('measurements').all()
+# получение датчиков
+# GET {{baseUrl}}/sensors/
+# создание датчика
+# POST {{baseUrl}}/sensors/
+class SensorsView(ListCreateAPIView):
+    queryset = Sensor.objects.all()
+    serializer_class = SensorSerializer
+
+
+# получение информации по датчику
+# GET {{baseUrl}}/sensors/1/
+# обновление датчика
+# PATCH {{baseUrl}}/sensors/1/
+class SensorView(RetrieveUpdateAPIView):
+    queryset = Sensor.objects.all()
     serializer_class = SensorDetailSerializer
 
-    def post(self, request):
-        return Response({'status': 'OK'})
 
-    def putch(self, request):
-        return Response({'status': 'OK'})
-
-class SensorView(RetrieveAPIView):
-    queryset = Sensor.objects.prefetch_related('measurements').all()
-    serializer_class = SensorDetailSerializer
-
-    def post(self, request):
-        return Response({'status': 'OK'})
-
-    def putch(self, request):
-        return Response({'status': 'OK'})
-class MeasurementView(RetrieveAPIView):
-    queryset = Measurement.objects.all()
+# добавление измерения
+# POST {{baseUrl}}/measurements/
+class MeasurementView(CreateAPIView):
     serializer_class = MeasurementSerializer
