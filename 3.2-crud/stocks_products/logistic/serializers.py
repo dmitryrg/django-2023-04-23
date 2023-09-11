@@ -11,9 +11,10 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ProductPositionSerializer(serializers.ModelSerializer):
     # настройте сериализатор для позиции продукта на складе
-    # product = serializers.SlugRelatedField(slug_field='', queryset=Product.objects.all())
-    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), required=False, allow_null=True)
+    # product = serializers.SlugRelatedField(slug_field='title', queryset=Product.objects.all())
     # product = ProductSerializer()
+
+    product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), required=False, allow_null=True)
     class Meta:
         model = StockProduct
         fields = ['id', 'quantity', 'price', 'product']
@@ -50,7 +51,9 @@ class StockSerializer(serializers.ModelSerializer):
         stock = super().update(instance, validated_data)
 
         # здесь вам надо обновить связанные таблицы
-        # в нашем случае: таблицу StockProduct
-        # с помощью списка positions
+        for position in positions:
+            _product = position.pop('product')
+            product = Product.objects.get(id=_product.id)
+            StockProduct.objects.filter(stock=stock, product=product).update(**position)
 
         return stock
