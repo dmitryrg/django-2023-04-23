@@ -15,6 +15,13 @@ class ProductPositionSerializer(serializers.ModelSerializer):
     # product = ProductSerializer()
 
     product = serializers.PrimaryKeyRelatedField(queryset=Product.objects.all(), required=False, allow_null=True)
+
+    # позволяет менять вывод, в данном случае выводим полностью объект продукта
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['product'] = ProductSerializer(instance.product).data
+        return representation
+
     class Meta:
         model = StockProduct
         fields = ['id', 'quantity', 'price', 'product']
@@ -34,8 +41,9 @@ class StockSerializer(serializers.ModelSerializer):
 
         stock = super().create(validated_data)
         for position in positions:
-            _product = position.pop('product')
-            product = Product.objects.get(id=_product.id)
+            product = position.pop('product')
+            # _product = position.pop('product')
+            # product = Product.objects.get(id=_product.id)
             StockProduct.objects.create(
                 stock=stock,
                 product=product,
@@ -52,8 +60,8 @@ class StockSerializer(serializers.ModelSerializer):
 
         # здесь вам надо обновить связанные таблицы
         for position in positions:
-            _product = position.pop('product')
-            product = Product.objects.get(id=_product.id)
-            StockProduct.objects.filter(stock=stock, product=product).update(**position)
+            product = position.pop('product')
+            # StockProduct.objects.filter(stock=stock, product=product).update(**position) # только обновление
+            StockProduct.objects.update_or_create(stock=stock, product=product, defaults={**position})
 
         return stock
